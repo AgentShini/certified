@@ -14,20 +14,14 @@ use Illuminate\Support\Facades\File;
 class CertificateController extends Controller
 {
     // Simulate course completion for a user
-    public function completeCourse($userId)
+    public function isPremium($userId)
     {
         $user = User::findOrFail($userId);
 
-        // For example, set the completion status to 'completed' if the user's progress reaches a certain threshold
-        if( $user->completion_status == 'completed'){
-            return response()->json(['message' => 'Course already Completed']);
-        }elseif (($user->progress == 100) && ($user->completion_status =='not completed')) {
-            $user->completion_status = 'completed';
-            $user->completed_at = now();
-            $user->save();
-            return response()->json(['message' => 'Course completion status updated']);
+        if( $user->premium == false){
+            return response()->json(['message' => 'Not Premium User']);
         }else{
-            return response()->json(['message' => 'User must reach a progress of 100']);
+            return response()->json(['message' => 'Premium User']);
         }
     }
 
