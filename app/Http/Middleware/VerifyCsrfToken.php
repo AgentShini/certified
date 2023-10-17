@@ -15,8 +15,8 @@ class VerifyCsrfToken extends Middleware
         //protect against csrf token auth
        'makePremium',
        'generateFree',
-       'generatePaid',
        'sendCertificate',
-       'deleteCertificate'
+       'deleteCertificate',
+       'revokePremium'
     ];
 }
