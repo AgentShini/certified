@@ -116,46 +116,84 @@ class CertificateController extends Controller
 
 
     // Send the generated certificate to a user's email
-
     public function sendCertificateByEmail(Request $request)
     {
         $userId = $request->input('userId');
         $certificateId = $request->input('certificateId');
         $user = User::findOrFail($userId);
     
-                // Retrieve all media entries that have a matching model_id
-            $certificates = $user->certificates;
-
+        // Construct the certificate path based on the certificate ID
+        $certificatePath = $certificateId;
+    
+        // Check if the certificate folder exists
+        if (Storage::disk('public')->exists($certificatePath)) {
             // Check if a certificate with the given ID exists in the user's certificates
-            $matchingCertificate = $certificates->firstWhere('id', $certificateId);
+            $matchingCertificate = $user->certificates->firstWhere('id', $certificateId);
     
-        if ($matchingCertificate) {
-            // Check if the user has generated any certificates
-            $availableCertificates = $user->media()->where('collection_name', 'certificates')->count();
+            if ($matchingCertificate) {
+                // Check if the user has generated any certificates
+                $availableCertificates = $user->media()->where('collection_name', 'certificates')->count();
     
-            if ($availableCertificates > 0) {
-                // Email subject
-                $title = "Congratulations on Completing {$user->course}";
+                if ($availableCertificates > 0) {
+                //       // Email subject
+                // $title = "Congratulations on Generating Your Certificate {$user->name}";
     
-                // Send the email
-                Mail::send('emails.certificate', ['user' => $user], function ($message) use ($user, $title, $matchingCertificate) {
-                    $message
-                        ->to($user->email)
-                        ->subject($title);
+                // // Send the email
+                // Mail::send('emails.certificate', ['user' => $user], function ($message) use ($user, $title, $matchingCertificate) {
+                //     $message
+                //         ->to($user->email)
+                //         ->subject($title);
     
-                    // Attaching the certificate to the email
-                    $filePath = $matchingCertificate->getPath();
-                    $fileName = 'certificate.png';
+                //     // Attaching the certificate to the email
+                //     $filePath = $matchingCertificate->getPath();
+                //     $fileName = 'certificate.png';
     
-                    $message->attach($filePath, [
-                        'as' => $fileName,
-                        'mime' => 'image/png', // Set the mime type for PNG
-                    ]);
-                });
-    
-                return response()->json(['message' => 'Certificate sent to email successfully']);
+                //     $message->attach($filePath, [
+                //         'as' => $fileName,
+                //         'mime' => 'image/png', // Set the mime type for PNG
+                //     ]);
+                // });
+                    return response()->json(['message' => 'Certificate sent to email successfully']);
+                } else {
+                    return response()->json(['message' => 'No available certificates to send']);
+                }
             } else {
-                return response()->json(['message' => 'No available certificates to send']);
+                return response()->json(['message' => 'Certificate not found or does not belong to the user']);
+            }
+        } else {
+            return response()->json(['message' => 'Certificate not found in storage']);
+        }
+    }
+    
+    
+    
+    
+    
+
+    // function for Certificate Deletion
+    public function deleteCertificate(Request $request)
+    {
+        $userId = $request->input('userId');
+        $certificateId = $request->input('certificateId');
+        $user = User::findOrFail($userId);
+    
+        // Construct the certificate path based on the certificate ID
+        $certificatePath = $certificateId;
+    
+        // Check if the certificate folder exists
+        if (Storage::disk('public')->exists($certificatePath)) {
+            // Check if a certificate with the given ID exists in the user's certificates
+            $matchingCertificate = $user->certificates->firstWhere('id', $certificateId);
+    
+    
+            if (Storage::disk('public')->exists($certificatePath)) {
+                Storage::disk('public')->delete($certificatePath); // Delete the associated file from storage
+                // If it exists in the storage, delete the matching certificate and the file
+                $matchingCertificate->delete();
+                return response()->json(['message' => 'Certificate deleted successfully']);
+            } else {
+                // If it doesn't exist in the storage, return an error message
+                return response()->json(['message' => 'Certificate file not found in storage']);
             }
         } else {
             return response()->json(['message' => 'Certificate not found or does not belong to the user']);
@@ -163,30 +201,6 @@ class CertificateController extends Controller
     }
     
     
-    
-
-    // function for Certificate Deletion
-    public function deleteCertificates(Request $request)
-
-    //Will be a protected route only admin can call
-    {
-        $userId = $request->input('userId'); 
-        $certificateId = $request->input('certificateId'); 
-        //3months validity
-        $expirationDate = Carbon::now()->subMonths(3);
-
-        // Find expired certificates in the 'certificates' media collection
-        $expiredCertificates = Media::where('collection_name', 'certificates')
-            ->where('created_at', '<', $expirationDate)
-            ->get();
-
-        // Delete each expired certificate
-        foreach ($expiredCertificates as $certificate) {
-            $certificate->delete();
-        }
-
-        return response()->json(['message' => 'Certificates Deleted']);
-    }
 }
 
 

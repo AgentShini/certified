@@ -16,6 +16,7 @@ class VerifyCsrfToken extends Middleware
        'makePremium',
        'generateFree',
        'generatePaid',
-       'sendCertificate'
+       'sendCertificate',
+       'deleteCertificate'
     ];
 }

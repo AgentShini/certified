@@ -39,3 +39,4 @@ Route::get('/isPremium',[CertificateController::class,'isPremium']);
 Route::post('/makePremium',[CertificateController::class,'makePremium']);
 Route::post('/generateFree',[CertificateController::class,'generateFreeCertificate']);
 Route::post('/sendCertificate', [CertificateController::class, 'sendCertificateByEmail']);
+Route::delete('/deleteCertificate', [CertificateController::class, 'deleteCertificate']);
