@@ -19,8 +19,9 @@ class UsersTableSeeder extends Seeder
     foreach (range(1, 5) as $index) {
         DB::table('users')->insert([
             'name' => $faker->name,
-            'email' => $faker->safeEmai,
+            'email' => $faker->safeEmail,
             'premium' => false,
+            'free_generated' => 0,
             'premium_start' => now(),
             'premium_end' => now(),
             'password' => Hash::make('password'), // You can set a default password

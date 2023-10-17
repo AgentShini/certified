@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CertificateController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,3 +34,8 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+Route::get('/isPremium',[CertificateController::class,'isPremium']);
+Route::post('/makePremium',[CertificateController::class,'makePremium']);
+Route::post('/generateFree',[CertificateController::class,'generateFreeCertificate']);
+Route::post('/sendCertificate', [CertificateController::class, 'sendCertificateByEmail']);

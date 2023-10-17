@@ -9,14 +9,19 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable
+class User extends Authenticatable implements hasMedia
 {
+    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia;
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +33,13 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('certificates');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -58,4 +70,10 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function certificates()
+{
+    return $this->hasMany(Media::class, 'model_id', 'id')->where('collection_name', 'certificates');
+}
+
 }

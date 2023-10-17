@@ -13,10 +13,9 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //protect against csrf token auth
-        'complete-course/*',
-        'check-course-completion/*',
-        'generate-certificate/*',
-        'send-certificate/*',
-        'delete-certificates',
+       'makePremium',
+       'generateFree',
+       'generatePaid',
+       'sendCertificate'
     ];
 }
