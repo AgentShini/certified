@@ -68,6 +68,10 @@ public function revokePremium(Request $request){
     
    public function generateFreeCertificate(Request $request)
    {  
+      $name = $request->input('name');
+      $title = $request->input('title');
+      $course = $request->input('course');
+
       $userId = $request->input('userId'); 
       $user = User::find($userId);
       if($user === null){
@@ -84,19 +88,19 @@ public function revokePremium(Request $request){
         * 
         */
 
-       $certificate->text("Placeholder Data 1", 160, 235, function ($font) {
+       $certificate->text($name, 160, 235, function ($font) {
            $font->file(public_path('fonts/roboto/Roboto-Black.ttf'));
-           $font->size(20);
+           $font->size(14);
            $font->color('#000000');
        });
-       $certificate->text("Placeholder Data 2", 160, 285, function ($font) {
+       $certificate->text($title, 160, 285, function ($font) {
            $font->file(public_path('fonts/roboto/Roboto-Black.ttf')); 
-           $font->size(20);
+           $font->size(14);
            $font->color('#000000');
        });
-       $certificate->text("Placeholder Data 3", 160, 325, function ($font) {
+       $certificate->text($course, 160, 325, function ($font) {
            $font->file(public_path('fonts/roboto/Roboto-Black.ttf'));
-           $font->size(20);
+           $font->size(14);
            $font->color('#000000');
        });
 
